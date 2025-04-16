@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Breast Cancer Detection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #f8bbd0, #fce4ec);
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(to right, #c2185b, #ad1457);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+      font-size: 2.5em;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .info {
+      text-align: center;
+      padding: 20px;
+      font-size: 1.2em;
+      max-width: 900px;
+      margin: 0 auto;
+      color: #444;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .option-card {
+      background-color: #fff;
+      border-left: 8px solid #ec407a;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 700px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .option-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .option-card h3 {
+      margin: 0;
+      color: #c2185b;
+      font-weight: 600;
+    }
+
+    .option-card ul {
+      padding-left: 20px;
+      margin: 10px 0 0 0;
+    }
+
+    .popup, .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+    }
+
+    .overlay {
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .popup {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .popup-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .popup-content h2 {
+      color: #ad1457;
+      margin-bottom: 15px;
+    }
+
+    .popup-content button {
+      background: #ad1457;
+      color: #fff;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-size: 1em;
+    }
+
+    .popup-content button:hover {
+      background: #880e4f;
+    }
+
+    @media (max-width: 600px) {
+      .option-card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>Breast Cancer Detection</header>
+
+  <div class="info">
+    Healthcare providers determine cancer types and subtypes so they can tailor treatment to be as effective as possible with the fewest possible side effects. Common types of breast cancer include:
+  </div>
+
+  <div class="options">
+    <div class="option-card" onclick="showPopup('Ductal Carcinoma In Situ')">
+      <h3>Symptoms:</h3>
+      <ul>
+        <li>Lump in breast or underarm</li>
+        <li>Redness or thickening of nipple or skin</li>
+        <li>Early stage with few or no symptoms</li>
+      </ul>
+    </div>
+
+    <div class="option-card" onclick="showPopup('Invasive Ductal Carcinoma')">
+      <h3>Symptoms:</h3>
+      <ul>
+        <li>Persistent breast pain</li>
+        <li>Swelling in part of the breast</li>
+        <li>Nipple discharge (not milk)</li>
+      </ul>
+    </div>
+
+    <div class="option-card" onclick="showPopup('Invasive Lobular Carcinoma')">
+      <h3>Symptoms:</h3>
+      <ul>
+        <li>Thickening in breast</li>
+        <li>Dimpling or skin changes</li>
+        <li>Full/heavy feeling</li>
+      </ul>
+    </div>
+
+    <div class="option-card" onclick="showPopup('Triple-Negative Breast Cancer')">
+      <h3>Symptoms:</h3>
+      <ul>
+        <li>Fast-growing lump</li>
+        <li>Painless swelling</li>
+        <li>More common in younger women</li>
+      </ul>
+    </div>
+
+    <div class="option-card" onclick="showPopup('Inflammatory Breast Cancer')">
+      <h3>Symptoms:</h3>
+      <ul>
+        <li>Red, warm, swollen breast</li>
+        <li>Pitted skin like orange peel</li>
+        <li>Rapid visible changes</li>
+      </ul>
+    </div>
+
+    <div class="option-card" onclick="showPopup('HER2-Positive Breast Cancer')">
+      <h3>Symptoms:</h3>
+      <ul>
+        <li>Rapid tumor growth</li>
+        <li>Aggressive symptoms</li>
+        <li>Responsive to targeted therapy</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Popup Modal -->
+  <div class="overlay" id="overlay" onclick="closePopup()"></div>
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <h2 id="popupTitle"></h2>
+      <p>This is the type of breast cancer based on the symptoms selected.<br>Please consult a healthcare professional for accurate diagnosis and treatment.</p>
+      <button onclick="closePopup()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    function showPopup(cancerType) {
+      document.getElementById('popupTitle').innerText = cancerType;
+      document.getElementById('popup').style.display = 'flex';
+      document.getElementById('overlay').style.display = 'block';
+    }
+
+    function closePopup() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
